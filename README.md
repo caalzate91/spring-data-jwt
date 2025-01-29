@@ -32,7 +32,7 @@ graph LR
     B -->|Interacts with| E[H2 Database]
 ```
 
-![spring-boot-security-login-jwt-architecture](spring-boot-security-login-jwt-architecture.png)
+
 
 ## Configure Spring Datasource, JPA, App properties
 Open `src/main/resources/application.properties`
