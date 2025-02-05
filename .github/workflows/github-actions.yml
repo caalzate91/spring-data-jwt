@@ -49,8 +49,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args:
-            -Dsonar.projectKey=${{env.PROJECTKEY}}
-            -Dsonar.organization=${{env.ORGANIZATION}}
+            -Dsonar.projectKey=${{vars.PROJECTKEY}}
+            -Dsonar.organization=${{vars.ORGANIZATION}}
             -Dsonar.sources=src
             -Dsonar.exclusions=**/*.class,**/*.java
             -Dsonar.verbose=true
