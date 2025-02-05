@@ -53,8 +53,10 @@ jobs:
             -Dsonar.projectKey=caalzate91_spring-data-jwt
             -Dsonar.organization=caalzate91
             -Dsonar.sources=src
+            -Dsonar.java.binaries=target/classes
             -Dsonar.verbose=true
             -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.scanner.skip=false
 
   publish:
     runs-on: ubuntu-latest
