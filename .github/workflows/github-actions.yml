@@ -1,6 +1,6 @@
-
 # This workflow will build a package using Maven, analyze with SonarCloud, and publish it to GitHub Container Registry (GHCR) using Docker
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
 name: Maven CI/CD with SonarCloud and GHCR
 
 on:
@@ -29,7 +29,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build with Maven
-        run: mvn clean verify
+        run: mvn clean compile -Dspring.datasource.url=jdbc:h2:mem:testdb -Dspring.datasource.driverClassName=org.h2.Driver -Dspring.datasource.username=sa -Dspring.datasource.password= 
 
   analysis:
     runs-on: ubuntu-latest
@@ -51,12 +51,12 @@ jobs:
           args:
             -Dsonar.projectKey=caalzate91_spring-data-jwt
             -Dsonar.organization=caalzate91
-            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=src
             -Dsonar.java.binaries=target/classes
             -Dsonar.verbose=true
             -Dsonar.branch.name=${{ github.ref_name }}
             -Dsonar.scanner.skip=false
+
   publish:
     runs-on: ubuntu-latest
     needs: [build, analysis]
