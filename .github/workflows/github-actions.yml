@@ -53,8 +53,6 @@ jobs:
             -Dsonar.organization=${{env.ORGANIZATION}}
             -Dsonar.sources=src
             -Dsonar.exclusions=**/*.class,**/*.java
-            -Dsonar.test.exclusions=tests/**
-            -Dsonar.tests=tests/
             -Dsonar.verbose=true
             -Dsonar.branch.name=${{ github.ref_name }}
             -Dsonar.scanner.skip=false
