@@ -3,14 +3,17 @@ package com.caalzate.spring.security.login.controllers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.caalzate.spring.security.login.models.ERole;
+import com.caalzate.spring.security.login.models.Mensaje;
 import com.caalzate.spring.security.login.models.Role;
 import com.caalzate.spring.security.login.models.User;
+import com.caalzate.spring.security.login.models.UserDetailContent;
 import com.caalzate.spring.security.login.payload.request.LoginRequest;
 import com.caalzate.spring.security.login.payload.request.SignupRequest;
 import com.caalzate.spring.security.login.payload.response.UserInfoResponse;
@@ -53,6 +58,12 @@ public class AuthController {
   PasswordEncoder encoder;
 
   @Autowired
+  private JmsTemplate jmsTemplate;
+
+  @Value("${caalzate.app.queueAuth}")
+  private String queueAuth;
+
+  @Autowired
   JwtUtils jwtUtils;
 
   @PostMapping("/signin")
@@ -70,6 +81,13 @@ public class AuthController {
     List<String> roles = userDetails.getAuthorities().stream()
         .map(item -> item.getAuthority())
         .collect(Collectors.toList());
+
+    Mensaje message = new Mensaje();
+    message.setId(UUID.randomUUID().toString());
+    UserDetailContent userDetailContent = new UserDetailContent(userDetails.getUsername(), userDetails.getEmail());
+    message.setContenido(userDetailContent);
+
+    jmsTemplate.convertAndSend(queueAuth, message);
 
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
         .body(new UserInfoResponse(userDetails.getId(),
